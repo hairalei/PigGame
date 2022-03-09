@@ -1,5 +1,6 @@
 'use strict';
 
+const btns = document.querySelectorAll('button');
 const btnNewGame = document.querySelector('.btn--new');
 const btnRollDice = document.querySelector('.btn--roll');
 const btnHold = document.querySelector('.btn--hold');
@@ -8,7 +9,9 @@ const scoreP2Txt = document.querySelector('#score--1');
 const currScoreP1Txt = document.querySelector('#current--0');
 const currScoreP2Txt = document.querySelector('#current--1');
 const player1 = document.querySelector('.player--0');
+const player1Name = document.querySelector('#name--0');
 const player2 = document.querySelector('.player--1');
+const player2Name = document.querySelector('#name--1');
 const diceImg = document.querySelector('.dice');
 
 let dice = 0;
@@ -19,6 +22,8 @@ let currPlayer = 1;
 let score = scoreP1;
 let scoreLabel;
 let currScoreLabel;
+let playerName;
+let player;
 
 function rollDice() {
   dice = Math.floor(Math.random() * 6) + 1;
@@ -39,23 +44,13 @@ function holdScore() {
   score += currScore;
   scoreLabel.textContent = score;
   currScore = 0;
-  console.log(`score: ${score}`);
-
-  console.log(`currscore: ${currScore}`);
   currScoreLabel.textContent = currScore;
 
-  switchPlayer();
+  if (score >= 50) checkWinner();
 
+  switchPlayer();
   setPlayer();
 }
-
-btnRollDice.addEventListener('click', () => {
-  rollDice();
-  console.log(dice);
-  console.log(`currscore: ${currScore}`);
-});
-
-btnHold.addEventListener('click', holdScore);
 
 function switchPlayer() {
   if (currPlayer === 1) {
@@ -72,15 +67,37 @@ function setPlayer() {
     score = scoreP1;
     scoreLabel = scoreP1Txt;
     currScoreLabel = currScoreP1Txt;
+    playerName = player1Name;
+    player = player1;
     player1.classList.add('player--active');
     player2.classList.remove('player--active');
   } else if (currPlayer === 2) {
     score = scoreP2;
     scoreLabel = scoreP2Txt;
     currScoreLabel = currScoreP2Txt;
+    playerName = player2Name;
+    player = player2;
     player1.classList.remove('player--active');
     player2.classList.add('player--active');
   }
 }
 
+function checkWinner() {
+  player.classList.add('player--winner');
+  playerName.textContent = 'WINNER!!!';
+  btnRollDice.disabled = true;
+  btnHold.disabled = true;
+}
+
+//Event listeners
+btnRollDice.addEventListener('click', () => {
+  diceImg.classList.remove('hidden');
+  rollDice();
+});
+
+btnHold.addEventListener('click', holdScore);
+
+btnNewGame.addEventListener('click', () => window.location.reload()); //refreshes the page when new game is clicked
+
+//Initializer
 setPlayer();
